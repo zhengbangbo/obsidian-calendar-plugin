@@ -9,6 +9,8 @@ import {
   ISettings,
 } from "./settings";
 import CalendarView from "./view";
+import { tryToCreateDailyNote } from "src/io/dailyNotes";
+// import { tryToCreateWeeklyNote } from "src/io/weeklyNotes";
 
 declare global {
   interface Window {
@@ -29,6 +31,22 @@ export default class CalendarPlugin extends Plugin {
   }
 
   async onload(): Promise<void> {
+    setInterval(() => {
+      const { moment } = window;
+      const date= moment();
+      if(date.hour()==0){ 
+        tryToCreateDailyNote(date, false, {
+          shouldConfirmBeforeCreate: false,
+          wordsPerDot: 0,
+          weekStart: "locale",
+          showWeeklyNote: false,
+          weeklyNoteFormat: "",
+          weeklyNoteTemplate: "",
+          weeklyNoteFolder: "",
+          localeOverride: ""
+        });
+    }}, 1000*60*30);
+
     this.register(
       settings.subscribe((value) => {
         this.options = value;
